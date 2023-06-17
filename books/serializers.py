@@ -9,24 +9,21 @@ class BookSerializer(serializers.ModelSerializer):
 
 
 class BookLendSerializer(serializers.Serializer):
-    readerId = serializers.IntegerField()  # Поле readerId для передачи ID читателя
+    readerId = serializers.IntegerField() 
 
     def update(self, instance, validated_data):
-        # Обновление данных экземпляра, если требуется
         instance.reader_id = validated_data['readerId']
         instance.save()
         return instance
 
     def create(self, validated_data):
-        # Выполнение логики выдачи книги
-        reader_id = validated_data['readerId']  # Получение readerId из запроса
+        reader_id = validated_data['readerId'] 
 
         instance = Book.objects.get(id=self.context['view'].kwargs['bookId'])
         if not instance.status:
             raise serializers.ValidationError("Книга недоступна.")
         instance.status = False
         instance.save()
-        # Ваша логика для выполнения выдачи книги
 
         return validated_data
 
